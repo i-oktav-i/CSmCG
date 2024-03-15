@@ -1,5 +1,3 @@
-import "../styles.css";
-
 import { mat4 } from "gl-matrix";
 import {
   createFloatGlBuffer,
