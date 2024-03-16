@@ -5,6 +5,7 @@ export default defineConfig({
   base: "/CSmCG",
   build: {
     minify: false,
+    target: "esnext",
     rollupOptions: {
       input: {
         main: join(import.meta.dirname, "index.html"),
