@@ -75,7 +75,7 @@ export const createGlContext = (canvas: HTMLCanvasElement) => {
 
 export const clearGlScene = (
   gl: WebGL2RenderingContext,
-  color: Tuple<number, 4>
+  color: Tuple<number, 4> = [0, 0, 0, 1]
 ) => {
   gl.clearColor(...color);
   gl.clear(gl.COLOR_BUFFER_BIT);
