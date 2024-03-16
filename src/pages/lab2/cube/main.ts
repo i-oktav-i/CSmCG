@@ -33,6 +33,7 @@ const init = () => {
   });
 
   const perspectiveMatrix = getPerspective(gl);
+  const lookAt = mat4.lookAt(mat4.create(), [2, 2, 2], [0, 0, 0], [0, 1, 0]);
 
   const pointsBuffer = createFloatGlBuffer(gl, glCubeVertexPositions);
   const colorsBuffer = createFloatGlBuffer(gl, colors);
@@ -48,7 +49,7 @@ const init = () => {
 
   gl.enableVertexAttribArray(positionAttributeLocation);
   gl.bindBuffer(gl.ARRAY_BUFFER, pointsBuffer);
-  gl.vertexAttribPointer(positionAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
   gl.enableVertexAttribArray(colorAttributeLocation);
   gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
@@ -58,18 +59,16 @@ const init = () => {
     program,
     "u_projection"
   );
-
+  const lookAtUniformLocation = gl.getUniformLocation(program, "u_lookAt");
   const transformUniformLocation = gl.getUniformLocation(
     program,
     "u_transform"
   );
 
   gl.uniformMatrix4fv(projectionUniformLocation, false, perspectiveMatrix);
+  gl.uniformMatrix4fv(lookAtUniformLocation, false, lookAt);
 
   const transformMatrix = mat4.identity(mat4.create());
-
-  mat4.translate(transformMatrix, transformMatrix, [0, 0, -1]);
-  mat4.scale(transformMatrix, transformMatrix, [0.1, 0.1, 0.1]);
 
   gl.uniformMatrix4fv(transformUniformLocation, false, transformMatrix);
 

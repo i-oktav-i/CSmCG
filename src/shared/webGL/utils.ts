@@ -90,6 +90,7 @@ export const setupGlScene = (
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
   gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
 
   clearGlScene(gl, clearColor);
 };
