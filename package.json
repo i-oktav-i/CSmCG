@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@types/gl-matrix": "^3.2.0",
+    "@types/lodash.throttle": "^4.1.9",
     "@types/node": "^20.11.28",
     "husky": "^9.0.11",
     "ts-toolbelt": "^9.6.0",
@@ -20,6 +21,7 @@
     "vite": "^5.1.4"
   },
   "dependencies": {
-    "gl-matrix": "^3.4.3"
+    "gl-matrix": "^3.4.3",
+    "lodash.throttle": "^4.1.1"
   }
 }
