@@ -79,59 +79,87 @@ const init = () => {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementsBuffer);
 
   const drawCube = (
-    pos: ReadonlyVec3,
+    centerPos: ReadonlyVec3,
+    xOffset: number,
     scale: ReadonlyVec3,
     globalRot: number,
-    localRot: number
+    localRot: number,
+    centerRot: number
   ) => {
     const transformMatrix = mat4.identity(mat4.create());
-    mat4.rotateY(transformMatrix, transformMatrix, (Math.PI / 180) * globalRot);
-    mat4.translate(transformMatrix, transformMatrix, pos);
     mat4.scale(transformMatrix, transformMatrix, scale);
+    mat4.rotateY(transformMatrix, transformMatrix, (Math.PI / 180) * globalRot);
+    mat4.translate(transformMatrix, transformMatrix, centerPos);
+    mat4.rotateY(transformMatrix, transformMatrix, (Math.PI / 180) * centerRot);
+    mat4.translate(transformMatrix, transformMatrix, [xOffset, 0, 0]);
     mat4.rotateY(transformMatrix, transformMatrix, (Math.PI / 180) * localRot);
+
     gl.uniformMatrix4fv(transformUniformLocation, false, transformMatrix);
     gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
   };
 
   const state = {
-    globalRot: 0,
-    leftRot: 0,
+    cameraRot: 0,
     centerRot: 0,
+    leftRot: 0,
+    middleRot: 0,
     rightRot: 0,
   };
 
   const draw = () => {
     clearGlScene(gl);
 
-    drawCube([0, 1.5, -10], [1, 2, 1], state.globalRot, state.centerRot);
-    drawCube([-2, 0, -10], [1, 1, 1], state.globalRot, state.leftRot);
-    drawCube([2, 0, -10], [1, 1, 1], state.globalRot, state.rightRot);
+    drawCube(
+      [0, 0.75, -10],
+      0,
+      [1, 2, 1],
+      state.cameraRot,
+      state.middleRot,
+      state.centerRot
+    );
+    drawCube(
+      [0, -1.5, -10],
+      -2,
+      [1, 0.5, 1],
+      state.cameraRot,
+      state.leftRot,
+      state.centerRot
+    );
+    drawCube(
+      [0, 0, -10],
+      2,
+      [1, 1, 1],
+      state.cameraRot,
+      state.rightRot,
+      state.centerRot
+    );
   };
 
   document.addEventListener("keydown", (event) => {
-    console.log("event.key", event.code);
-    if (event.code === "Space") {
-      state.globalRot += 7;
+    const keysMap = {
+      Space: "centerRot",
+      ArrowUp: "cameraRot",
+      ArrowLeft: "leftRot",
+      ArrowRight: "rightRot",
+      ArrowDown: "middleRot",
+    } as const;
+
+    if (event.code in keysMap) {
+      state[keysMap[event.code as keyof typeof keysMap]] += 5;
+
+      requestAnimationFrame(draw);
     }
-    if (event.code === "ArrowLeft") {
-      state.leftRot += 7;
-    }
-    if (event.code === "ArrowRight") {
-      state.rightRot += 7;
-    }
-    if (event.code === "ArrowDown") {
-      state.centerRot += 7;
-    }
-    draw();
   });
 
   document.addEventListener("pointerdown", () => {
     const onMove = _throttle((moveEvent: PointerEvent) => {
-      state.globalRot += moveEvent.movementX;
-      state.leftRot += moveEvent.movementY;
-      state.rightRot += moveEvent.movementY;
-      state.centerRot += moveEvent.movementY;
-      draw();
+      state.cameraRot += moveEvent.movementX;
+      state.centerRot += moveEvent.movementY * 2;
+      state.leftRot += moveEvent.movementY / 2;
+      state.rightRot += moveEvent.movementY / 2;
+      state.middleRot += moveEvent.movementY / 2;
+
+      requestAnimationFrame(draw);
     }, 1000 / 60);
 
     const onMoveEnd = () => {
