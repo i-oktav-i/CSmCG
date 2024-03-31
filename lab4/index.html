@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSmCG</title>
+    <link rel="stylesheet" href="/src/pages/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <nav>
+        <a href="/CSmCG/">back</a>
+      </nav>
+
+      <form action="#" name="settings">
+        <fieldset>
+          <label>
+            light color
+            <input
+              type="color"
+              name="lightColor"
+              id="lightColor"
+              value="#ffffff"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <label>
+            ambient light color
+            <input
+              type="color"
+              name="ambientLightColor"
+              id="ambientLightColor"
+              value="#191919"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <label>
+            constant attenuation
+            <input
+              type="number"
+              name="constantAttenuation"
+              id="constantAttenuation"
+              value="1"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <label>
+            linear attenuation
+            <input
+              type="number"
+              name="linearAttenuation"
+              id="linearAttenuation"
+              value="0.01"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <label>
+            quadratic attenuation
+            <input
+              type="number"
+              name="quadraticAttenuation"
+              id="quadraticAttenuation"
+              value="0.001"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <label>
+            vertex shading
+            <input type="radio" name="shading" value="vertex" checked />
+          </label>
+
+          <label>
+            per pixel shading
+            <input type="radio" name="shading" value="pixel" />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <label>
+            Lambert
+
+            <input type="radio" name="modelType" value="0" checked />
+          </label>
+
+          <label>
+            Phong
+
+            <input type="radio" name="modelType" value="1" />
+          </label>
+
+          <label>
+            Blinn-Phong
+
+            <input type="radio" name="modelType" value="2" />
+          </label>
+
+          <label>
+            Cel Shading
+
+            <input type="radio" name="modelType" value="3" />
+          </label>
+
+          <label>
+            Oren-Nayar
+
+            <input type="radio" name="modelType" value="4" />
+          </label>
+        </fieldset>
+      </form>
+
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <script type="module" src="/src/pages/lab4/main.ts"></script>
+  </body>
+</html>
