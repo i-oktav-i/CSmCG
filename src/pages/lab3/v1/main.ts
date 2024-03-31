@@ -7,11 +7,11 @@ import {
   createIntGlBuffer,
   getPerspective,
   initGlProgram,
-} from "../../shared/webGL";
+} from "../../../shared/webGL";
 import {
   glCubeEdgesElements,
   glCubeVertexPositions,
-} from "../../shared/webGL/constants/cube";
+} from "../../../shared/webGL/constants/cube";
 import fragmentShader from "./fragmentShader.glsl?raw";
 import vertexShader from "./vertexShader.glsl?raw";
 
@@ -110,7 +110,7 @@ const init = () => {
     clearGlScene(gl);
 
     drawCube(
-      [0, 0.75, -10],
+      [0, 0.5, -10],
       0,
       [1, 2, 1],
       state.cameraRot,
@@ -118,7 +118,7 @@ const init = () => {
       state.centerRot
     );
     drawCube(
-      [0, -1.5, -10],
+      [0, -1, -10],
       -2,
       [1, 0.5, 1],
       state.cameraRot,
