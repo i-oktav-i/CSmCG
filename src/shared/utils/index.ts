@@ -5,12 +5,6 @@ export const hexToRgb = (hex: string): [number, number, number] => {
     groups: Record<"R" | "G" | "B", string>;
   };
 
-  console.log([
-    parseInt(groups.R, 16),
-    parseInt(groups.G, 16),
-    parseInt(groups.B, 16),
-  ]);
-
   return [
     parseInt(groups.R, 16) / 255,
     parseInt(groups.G, 16) / 255,

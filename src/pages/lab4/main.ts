@@ -1,18 +1,9 @@
 import _throttle from "lodash.throttle";
 
 import { ReadonlyVec3, mat3, mat4, vec3, vec4 } from "gl-matrix";
+import { initPedestalBase } from "../../entities/pedestal";
 import { hexToRgb } from "../../shared/utils";
-import {
-  clearGlScene,
-  createFloatGlBuffer,
-  createIntGlBuffer,
-  initGlProgram,
-} from "../../shared/webGL";
-import {
-  glCubeEdgesElements,
-  glCubeVertexNormals,
-  glCubeVertexPositions,
-} from "../../shared/webGL/constants/cube";
+import { clearGlScene, initGlProgram } from "../../shared/webGL";
 import { getProjectionMatrix } from "../../utils";
 import perPixelShadingFragmentShader from "./perPixelShadingFragmentShader.glsl?raw";
 import perPixelShadingVertexShader from "./perPixelShadingVertexShader.glsl?raw";
@@ -71,106 +62,44 @@ const init = () => {
     [0, 1, 0]
   );
 
-  const pointsBuffer = createFloatGlBuffer(gl, glCubeVertexPositions);
-  const normalBuffer = createFloatGlBuffer(gl, glCubeVertexNormals);
-
-  const elementsBuffer = createIntGlBuffer(
-    gl,
-    glCubeEdgesElements,
-    gl.ELEMENT_ARRAY_BUFFER
-  );
-
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  const normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
-
-  gl.enableVertexAttribArray(positionAttributeLocation);
-  gl.bindBuffer(gl.ARRAY_BUFFER, pointsBuffer);
-  gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-  gl.enableVertexAttribArray(normalAttributeLocation);
-  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-  gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-  const projectionUniformLocation = gl.getUniformLocation(
-    program,
-    "u_projection"
-  );
-  const transformUniformLocation = gl.getUniformLocation(
-    program,
-    "u_transform"
-  );
-  const normalUniformLocation = gl.getUniformLocation(program, "u_normal");
+  const {
+    bindElementsBuffer,
+    setAmbientLightColor,
+    setConstantAttenuation,
+    setDiffuseLightColor,
+    setLightPosition,
+    setLinearAttenuation,
+    setNormal,
+    setProjection,
+    setQuadraticAttenuation,
+    setSpecularLightColor,
+    setTransform,
+  } = initPedestalBase(gl, program);
 
   const colorUniformLocation = gl.getUniformLocation(program, "u_color");
-
-  const lightPositionUniformLocation = gl.getUniformLocation(
-    program,
-    "u_lightPosition"
-  );
-  const ambientLightColorUniformLocation = gl.getUniformLocation(
-    program,
-    "u_ambientLightColor"
-  );
-  const diffuseLightColorUniformLocation = gl.getUniformLocation(
-    program,
-    "u_diffuseLightColor"
-  );
-  const specularLightColorUniformLocation = gl.getUniformLocation(
-    program,
-    "u_specularLightColor"
-  );
-
-  const constantAttenuationUniformLocation = gl.getUniformLocation(
-    program,
-    "u_constantAttenuation"
-  );
-
-  const linearAttenuationUniformLocation = gl.getUniformLocation(
-    program,
-    "u_linearAttenuation"
-  );
-
-  const quadraticAttenuationUniformLocation = gl.getUniformLocation(
-    program,
-    "u_quadraticAttenuation"
-  );
 
   const lightModelTypeUniformLocation = gl.getUniformLocation(
     program,
     "u_lightModelType"
   );
 
+  setProjection(projectionMatrix);
+
   const lightPosition: ReadonlyVec3 = [0, 10, -10];
 
-  gl.uniform3fv(lightPositionUniformLocation, lightPosition);
-  gl.uniform3fv(
-    specularLightColorUniformLocation,
-    hexToRgb(settings.lightColor.value)
-  );
-  gl.uniform3fv(
-    ambientLightColorUniformLocation,
-    hexToRgb(settings.ambientLightColor.value)
-  );
-  gl.uniform3fv(diffuseLightColorUniformLocation, [0.7, 0.7, 0.7]);
+  setLightPosition(lightPosition);
 
-  gl.uniform1f(
-    constantAttenuationUniformLocation,
-    settings.constantAttenuation.valueAsNumber
-  );
-  gl.uniform1f(
-    linearAttenuationUniformLocation,
-    settings.linearAttenuation.valueAsNumber
-  );
-  gl.uniform1f(
-    quadraticAttenuationUniformLocation,
-    settings.quadraticAttenuation.valueAsNumber
-  );
+  setSpecularLightColor(hexToRgb(settings.lightColor.value));
+  setAmbientLightColor(hexToRgb(settings.ambientLightColor.value));
+  setDiffuseLightColor([0.7, 0.7, 0.7]);
+
+  setConstantAttenuation(settings.constantAttenuation.valueAsNumber);
+  setLinearAttenuation(settings.linearAttenuation.valueAsNumber);
+  setQuadraticAttenuation(settings.quadraticAttenuation.valueAsNumber);
 
   gl.uniform1i(lightModelTypeUniformLocation, +settings.modelType.value);
 
-  gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementsBuffer);
+  bindElementsBuffer();
 
   const drawCube = (
     centerPos: ReadonlyVec3,
@@ -193,8 +122,8 @@ const init = () => {
 
     mat3.normalFromMat4(normalMatrix, transformMatrix);
 
-    gl.uniformMatrix4fv(transformUniformLocation, false, transformMatrix);
-    gl.uniformMatrix3fv(normalUniformLocation, false, normalMatrix);
+    setTransform(transformMatrix);
+    setNormal(normalMatrix);
 
     gl.uniform4fv(colorUniformLocation, color);
 
@@ -212,7 +141,7 @@ const init = () => {
       (Math.PI / 180) * state.lightRot
     );
 
-    gl.uniform3fv(lightPositionUniformLocation, lightPos);
+    setLightPosition(lightPos);
 
     drawCube(
       [0, 0.5, -10],
