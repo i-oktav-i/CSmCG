@@ -1,11 +1,11 @@
 import _throttle from "lodash.throttle";
 
 import { ReadonlyVec3, mat3, mat4, vec3, vec4 } from "gl-matrix";
+import { hexToRgb } from "../../shared/utils";
 import {
   clearGlScene,
   createFloatGlBuffer,
   createIntGlBuffer,
-  getPerspective,
   initGlProgram,
 } from "../../shared/webGL";
 import {
@@ -13,11 +13,11 @@ import {
   glCubeVertexNormals,
   glCubeVertexPositions,
 } from "../../shared/webGL/constants/cube";
+import { getProjectionMatrix } from "../../utils";
 import perPixelShadingFragmentShader from "./perPixelShadingFragmentShader.glsl?raw";
 import perPixelShadingVertexShader from "./perPixelShadingVertexShader.glsl?raw";
 import vertexShadingFragmentShader from "./vertexShadingFragmentShader.glsl?raw";
 import vertexShadingVertexShader from "./vertexShadingVertexShader.glsl?raw";
-import { hexToRgb } from "../../shared/utils";
 
 const { settings } = window as unknown as {
   settings: HTMLFormElement & {
@@ -64,9 +64,8 @@ const init = () => {
     bronze: [0.804, 0.522, 0.247, 1],
   };
 
-  const perspectiveMatrix = getPerspective(gl);
-  const lookAt = mat4.lookAt(
-    mat4.create(),
+  const projectionMatrix = getProjectionMatrix(
+    gl,
     [0, 10, -5],
     [0, 8, -10],
     [0, 1, 0]
@@ -96,7 +95,6 @@ const init = () => {
     program,
     "u_projection"
   );
-  const lookAtUniformLocation = gl.getUniformLocation(program, "u_lookAt");
   const transformUniformLocation = gl.getUniformLocation(
     program,
     "u_transform"
@@ -170,8 +168,7 @@ const init = () => {
 
   gl.uniform1i(lightModelTypeUniformLocation, +settings.modelType.value);
 
-  gl.uniformMatrix4fv(projectionUniformLocation, false, perspectiveMatrix);
-  gl.uniformMatrix4fv(lookAtUniformLocation, false, lookAt);
+  gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementsBuffer);
 

@@ -10,6 +10,6 @@ uniform mat4 u_lookAt;
 out vec4 v_color;
 
 void main() {
-  gl_Position = u_projection * u_lookAt * u_transform * vec4(a_position, 1);
+  gl_Position = u_projection * u_transform * vec4(a_position, 1);
   v_color = a_color;
 }

@@ -5,13 +5,13 @@ import {
   clearGlScene,
   createFloatGlBuffer,
   createIntGlBuffer,
-  getPerspective,
   initGlProgram,
 } from "../../../shared/webGL";
 import {
   glCubeEdgesElements,
   glCubeVertexPositions,
 } from "../../../shared/webGL/constants/cube";
+import { getProjectionMatrix } from "../../../utils";
 import fragmentShader from "./fragmentShader.glsl?raw";
 import vertexShader from "./vertexShader.glsl?raw";
 
@@ -35,9 +35,8 @@ const init = () => {
     return Array(4).fill(polygonColor).flat();
   });
 
-  const perspectiveMatrix = getPerspective(gl);
-  const lookAt = mat4.lookAt(
-    mat4.create(),
+  const projectionMatrix = getProjectionMatrix(
+    gl,
     [0, 0.5, 0],
     [0, 0.5, -1],
     [0, 1, 0]
@@ -67,14 +66,12 @@ const init = () => {
     program,
     "u_projection"
   );
-  const lookAtUniformLocation = gl.getUniformLocation(program, "u_lookAt");
   const transformUniformLocation = gl.getUniformLocation(
     program,
     "u_transform"
   );
 
-  gl.uniformMatrix4fv(projectionUniformLocation, false, perspectiveMatrix);
-  gl.uniformMatrix4fv(lookAtUniformLocation, false, lookAt);
+  gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementsBuffer);
 

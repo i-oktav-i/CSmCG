@@ -5,7 +5,6 @@ precision mediump float;
 uniform mat4 u_projection;
 uniform mat4 u_transform;
 uniform mat3 u_normal;
-uniform mat4 u_lookAt;
 
 uniform vec3 u_lightPosition;
 uniform vec3 u_ambientLightColor;
@@ -27,7 +26,7 @@ out vec4 color;
 const float shininess = 16.0;
 
 void main() {
-  vec4 vertextPositionEye4 = u_lookAt * u_transform * vec4(v_position, 1);
+  vec4 vertextPositionEye4 = u_transform * vec4(v_position, 1);
   vec3 vertextPositionEye3 = vertextPositionEye4.xyz / vertextPositionEye4.w;
 
   vec3 lightDirection = normalize(u_lightPosition - vertextPositionEye3);
