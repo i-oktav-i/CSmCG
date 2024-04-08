@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import type { Tuple } from "../typings";
+import type { InRange, Tuple } from "../typings";
 
 export const createShader = (
   gl: WebGL2RenderingContext,
@@ -154,4 +154,66 @@ export const getPerspective = (gl: WebGL2RenderingContext) => {
     0.1,
     100
   );
+};
+
+export const loadTextures = (sources: string[]) => {
+  return Promise.all(
+    sources.map(
+      (src) =>
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        })
+    )
+  );
+};
+
+export const initTexture = (
+  gl: WebGL2RenderingContext,
+  loadImage: () => void,
+  index: number
+) => {
+  const texture = gl.createTexture();
+
+  if (!texture) {
+    throw new Error("Could not create texture buffer");
+  }
+
+  gl.activeTexture(gl[`TEXTURE${index as unknown as InRange<32>}`]);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  loadImage();
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+};
+
+/* Loads textures and binds with buffers */
+export const initTextures = (
+  gl: WebGL2RenderingContext,
+  textures: HTMLImageElement[]
+) => {
+  if (textures.length > 32) throw new Error("Too many textures");
+
+  textures.forEach((texture, i) => {
+    initTexture(
+      gl,
+      () => {
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          texture
+        );
+      },
+      i
+    );
+  });
 };

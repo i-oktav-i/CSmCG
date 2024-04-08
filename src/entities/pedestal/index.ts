@@ -11,6 +11,7 @@ import {
   createFloatGlBuffer,
   createIntGlBuffer,
   glCubeEdgesElements,
+  glCubeTextureCoordinates,
   glCubeVertexNormals,
   glCubeVertexPositions,
 } from "../../shared/webGL";
@@ -18,9 +19,14 @@ import {
 const initAttributes = (gl: WebGL2RenderingContext, program: WebGLProgram) => {
   const pointsBuffer = createFloatGlBuffer(gl, glCubeVertexPositions);
   const normalBuffer = createFloatGlBuffer(gl, glCubeVertexNormals);
+  const textureCoordBuffer = createFloatGlBuffer(gl, glCubeTextureCoordinates);
 
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
   const normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
+  const textureCoordAttributeLocation = gl.getAttribLocation(
+    program,
+    "a_texcoord"
+  );
 
   gl.enableVertexAttribArray(positionAttributeLocation);
   gl.bindBuffer(gl.ARRAY_BUFFER, pointsBuffer);
@@ -29,6 +35,17 @@ const initAttributes = (gl: WebGL2RenderingContext, program: WebGLProgram) => {
   gl.enableVertexAttribArray(normalAttributeLocation);
   gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
   gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+  gl.enableVertexAttribArray(textureCoordAttributeLocation);
+  gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
+  gl.vertexAttribPointer(
+    textureCoordAttributeLocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
 };
 
 const initElements = (gl: WebGL2RenderingContext) => {

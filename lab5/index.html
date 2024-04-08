@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSmCG</title>
+    <link rel="stylesheet" href="/src/pages/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <nav>
+        <a href="/CSmCG/">back</a>
+      </nav>
+
+      <form action="#" name="settings">
+        <fieldset>
+          <label>
+            texture 1
+
+            <input type="range" name="texture1" min="0" max="33" value="33" />
+          </label>
+          <label>
+            texture 2
+
+            <input type="range" name="texture2" min="0" max="33" value="33" />
+          </label>
+          <label>
+            texture 3
+
+            <input type="range" name="texture3" min="0" max="33" value="33" />
+          </label>
+        </fieldset>
+      </form>
+
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <script type="module" src="/src/pages/lab5/main.ts"></script>
+  </body>
+</html>
