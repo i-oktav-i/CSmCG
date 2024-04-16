@@ -18,6 +18,7 @@ export default defineConfig({
         "lab3/v1": join(import.meta.dirname, "lab3/v1/index.html"),
         lab4: join(import.meta.dirname, "lab4/index.html"),
         lab5: join(import.meta.dirname, "lab5/index.html"),
+        lab6: join(import.meta.dirname, "lab6/index.html"),
       },
     },
   },

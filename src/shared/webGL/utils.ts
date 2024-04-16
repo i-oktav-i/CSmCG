@@ -113,7 +113,7 @@ export const createFloatGlBuffer = (
 
 export const createIntGlBuffer = (
   gl: WebGL2RenderingContext,
-  data: number[] | Float32Array,
+  data: number[] | Uint16Array,
   type: GLenum = gl.ARRAY_BUFFER
 ) => {
   const buffer = gl.createBuffer();
@@ -173,7 +173,8 @@ export const loadTextures = (sources: string[]) => {
 export const initTexture = (
   gl: WebGL2RenderingContext,
   loadImage: () => void,
-  index: number
+  index: number,
+  wrap: GLenum = gl.REPEAT
 ) => {
   const texture = gl.createTexture();
 
@@ -188,14 +189,15 @@ export const initTexture = (
 
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
 };
 
 /* Loads textures and binds with buffers */
 export const initTextures = (
   gl: WebGL2RenderingContext,
-  textures: HTMLImageElement[]
+  textures: HTMLImageElement[],
+  wrap: GLenum = gl.REPEAT
 ) => {
   if (textures.length > 32) throw new Error("Too many textures");
 
@@ -213,7 +215,8 @@ export const initTextures = (
           texture
         );
       },
-      i
+      i,
+      wrap
     );
   });
 };

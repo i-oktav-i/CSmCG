@@ -58,7 +58,7 @@ const initElements = (gl: WebGL2RenderingContext) => {
   return () => gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementsBuffer);
 };
 
-const initTransformUniforms = (
+export const initTransformUniforms = (
   gl: WebGL2RenderingContext,
   program: WebGLProgram
 ) => {
@@ -79,7 +79,7 @@ const initTransformUniforms = (
   };
 };
 
-const getTransformUniformsSetters = (
+export const getTransformUniformsSetters = (
   gl: WebGL2RenderingContext,
   program: WebGLProgram
 ) => {
@@ -100,7 +100,7 @@ const getTransformUniformsSetters = (
   return { setProjection, setTransform, setNormal };
 };
 
-const initLightUniforms = (
+export const initLightUniforms = (
   gl: WebGL2RenderingContext,
   program: WebGLProgram
 ) => {
@@ -129,7 +129,7 @@ const initLightUniforms = (
   };
 };
 
-const getLightUniformsSetters = (
+export const getLightUniformsSetters = (
   gl: WebGL2RenderingContext,
   program: WebGLProgram
 ) => {

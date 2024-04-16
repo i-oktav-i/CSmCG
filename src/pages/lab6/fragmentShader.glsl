@@ -1,6 +1,6 @@
 # version 300 es
 
-precision mediump float;
+precision highp float;
 
 uniform mat4 u_projection;
 uniform mat4 u_transform;
@@ -15,21 +15,15 @@ uniform float u_constantAttenuation;
 uniform float u_linearAttenuation;
 uniform float u_quadraticAttenuation;
 
-uniform vec4 u_color;
-
-uniform sampler2D u_texture1;
-uniform sampler2D u_texture2;
-uniform sampler2D u_texture3;
-
-uniform float u_texture1BlendWeight;
-uniform float u_texture2BlendWeight;
-uniform float u_texture3BlendWeight;
+uniform sampler2D u_texture;
+uniform sampler2D u_bumpMap;
 
 uniform vec2 u_textureScale;
 
 in vec3 v_normal;
 in vec3 v_position;
 in vec2 v_texcoord;
+
 out vec4 color;
 
 const float shininess = 16.0;
@@ -40,7 +34,9 @@ void main() {
 
   vec3 lightDirection = normalize(u_lightPosition - vertextPositionEye3);
 
-  vec3 normal = normalize(u_normal * v_normal);
+  float height = texture(u_bumpMap, v_texcoord * u_textureScale).r;
+
+  vec3 normal = normalize(u_normal * (v_normal + vec3(dFdx(height), dFdy(height), 0.0)));
 
   float diffuseLightDot = max(dot(normal, lightDirection), 0.0);
 
@@ -54,19 +50,7 @@ void main() {
 
   vec3 lightWeighting = u_ambientLightColor + u_diffuseLightColor * diffuseLightDot + u_specularLightColor * specularLightParam;
 
-  vec4 rawPixel1 = texture(u_texture1, v_texcoord * u_textureScale);
-  vec4 pixel2 = texture(u_texture2, v_texcoord * u_textureScale);
-  vec4 pixel3 = texture(u_texture3, v_texcoord * u_textureScale);
+  vec4 pixel = texture(u_texture, v_texcoord * u_textureScale);
 
-  vec4 pixel1 = rawPixel1;
-
-  if (rawPixel1.a < 0.1) {
-    pixel1 = vec4(1, 1, 1, 1);
-  }
-
-  vec3 pixelRGB = pixel1.rgb * u_texture1BlendWeight + pixel2.rgb * u_texture2BlendWeight + pixel3.rgb * u_texture3BlendWeight;
-
-  float alpha = max(max(pixel1.a, pixel2.a), pixel3.a);
-
-  color = vec4(lightWeighting * attenuation * pixelRGB, alpha);
+  color = vec4(lightWeighting * attenuation * pixel.rgb, pixel.a);
 }
