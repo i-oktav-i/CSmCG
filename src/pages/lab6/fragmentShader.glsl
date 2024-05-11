@@ -34,9 +34,13 @@ void main() {
 
   vec3 lightDirection = normalize(u_lightPosition - vertextPositionEye3);
 
-  float height = texture(u_bumpMap, v_texcoord * u_textureScale).r;
+  float xCoordGradient = dFdx(v_texcoord.x);
+  float yCoordGradient = dFdy(v_texcoord.y);
 
-  vec3 normal = normalize(u_normal * (v_normal + vec3(dFdx(height), dFdy(height), 0.0)));
+  vec4 xGradient = texture(u_bumpMap, v_texcoord - vec2(xCoordGradient, 0.0)) - texture(u_bumpMap, v_texcoord + vec2(xCoordGradient, 0.0));
+  vec4 yGradient = texture(u_bumpMap, v_texcoord - vec2(0.0, yCoordGradient)) - texture(u_bumpMap, v_texcoord + vec2(0.0, yCoordGradient));
+
+  vec3 normal = normalize(u_normal * v_normal + normalize(vec3(xGradient.r, yGradient.r, 1.0)));
 
   float diffuseLightDot = max(dot(normal, lightDirection), 0.0);
 

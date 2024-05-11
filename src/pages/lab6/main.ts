@@ -22,15 +22,11 @@ import {
 } from "../../shared/webGL/initModel";
 import { parseObj } from "../../shared/webGL/parseObj";
 import sphereObj from "./model.obj?raw";
-import orangeImage from "./textures/orangeOrig.jpg";
-import bumpMapImage from "./textures/orangeOrigBumpMap1.jpg";
+import bumpMapImage from "./textures/bumpmap.jpg";
 
 const sphereModelInfo = parseObj(sphereObj);
 
-const [orangeTexture, bumpMapTexture] = await loadTextures([
-  orangeImage,
-  bumpMapImage,
-]);
+const [bumpMapTexture] = await loadTextures([bumpMapImage]);
 
 const state = {
   sphereRot: 0,
@@ -76,7 +72,7 @@ const init = () => {
 
   const bumpMapUniformLocation = gl.getUniformLocation(program, "u_bumpMap");
 
-  const texturesImages = [orangeTexture, bumpMapTexture];
+  const texturesImages = [bumpMapTexture];
 
   initTextures(gl, texturesImages, gl.MIRRORED_REPEAT);
   initTexture(
@@ -96,23 +92,6 @@ const init = () => {
       );
     },
     texturesImages.length
-  );
-  initTexture(
-    gl,
-    () => {
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        1,
-        1,
-        0,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        new Uint8Array([255, 255, 255, 255])
-      );
-    },
-    texturesImages.length + 1
   );
 
   const textureUniformLocation = gl.getUniformLocation(program, "u_texture");
@@ -139,9 +118,9 @@ const init = () => {
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-  gl.uniform1i(textureUniformLocation, 0);
-  gl.uniform1i(bumpMapUniformLocation, 1);
-  gl.uniform2fv(textureScaleUniformLocation, [4, 4]);
+  gl.uniform1i(textureUniformLocation, texturesImages.length);
+  gl.uniform1i(bumpMapUniformLocation, 0);
+  gl.uniform2fv(textureScaleUniformLocation, [1, 1]);
 
   bindElementsBuffer();
 
@@ -161,8 +140,6 @@ const init = () => {
 
     setTransform(transformMatrix);
     setNormal(normalMatrix);
-
-    // gl.uniform2fv(textureScaleUniformLocation, [scale[0] / 2, scale[1] / 2]);
 
     gl.drawElements(
       gl.TRIANGLES,
