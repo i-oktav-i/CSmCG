@@ -220,3 +220,36 @@ export const initTextures = (
     );
   });
 };
+
+export const getUniformLocation = (
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  name: string
+) => {
+  const location = gl.getUniformLocation(program, `u_${name}`);
+
+  if (location === null)
+    throw new Error(`Could not get uniform location for ${name}`);
+
+  return location;
+};
+
+type GlUniformSetterMethod = Extract<
+  keyof WebGL2RenderingContext,
+  `uniform${string}`
+>;
+
+export const getUniformSetter = <T extends GlUniformSetterMethod>(
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  name: string,
+  method: T
+) => {
+  const location = getUniformLocation(gl, program, name);
+
+  type Params = Parameters<WebGL2RenderingContext[T]>;
+  type RestParams = Params extends [any, ...infer Rest] ? Rest : never;
+
+  // @ts-ignore
+  return (...rest: RestParams) => gl[method](location, ...rest);
+};
