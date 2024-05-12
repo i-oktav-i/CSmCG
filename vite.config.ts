@@ -21,6 +21,10 @@ export default defineConfig({
         lab6: join(import.meta.dirname, "lab6/index.html"),
         lab8: join(import.meta.dirname, "lab8/index.html"),
         "lab8/sparkler": join(import.meta.dirname, "lab8/sparkler/index.html"),
+        "lab8/fireworks/": join(
+          import.meta.dirname,
+          "lab8/fireworks/index.html"
+        ),
       },
     },
   },
