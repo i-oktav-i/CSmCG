@@ -26,6 +26,10 @@ export default defineConfig({
           "lab8/fireworks/index.html"
         ),
         "lab8/smoke": join(import.meta.dirname, "lab8/smoke/index.html"),
+        "lab8/sandglass": join(
+          import.meta.dirname,
+          "lab8/sandglass/index.html"
+        ),
       },
     },
   },
